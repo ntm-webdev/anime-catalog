@@ -1,0 +1,34 @@
+.formContainer {
+    background-color: rgba(37, 34, 34, .95);
+    border-radius: 8px;
+    color: #fff;
+    max-width: 450px;
+    min-height: 400px;
+    padding: 30px;
+    margin: 30px auto 0;
+}
+
+.error {
+    color: red;
+}
+
+.btnYellow {
+    background-color: black;
+    color: white;
+    border: 1px solid yellow;
+    padding: 5px;
+}
+
+.btnYellow:hover,
+.clicked {
+    background-color: yellow;
+    color: black;
+}
+
+.btnYellow:disabled,
+.btnYellow[disabled] {
+    border: 1px solid #999999;
+    background-color: #ffff4d;
+    color: black;
+    cursor: not-allowed;
+}
