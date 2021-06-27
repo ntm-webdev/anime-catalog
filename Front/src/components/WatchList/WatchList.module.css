@@ -1,13 +1,13 @@
 .cardImg {
-    width: 100%;
-    height: 25vw;
-    object-fit: cover;
+  width: 100%;
+  height: 25vw;
+  object-fit: cover;
 }
 
 .customizedCard {
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid white;
-    padding: 1rem;
-    overflow: auto;
-    line-break: strict !important;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid white;
+  padding: 1rem;
+  overflow: auto;
+  line-break: strict !important;
 }

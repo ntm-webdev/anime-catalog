@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import useInput from "../../hooks/use-input";
 import useHttp from "../../hooks/use-http";
-import styles from "./AddAnime.module.css";
 import Spinner from "../../components/UI/Spinner/Spinner";
 
 const AddAnime = () => {
@@ -109,12 +108,7 @@ const AddAnime = () => {
     fd.append("trailer", trailer);
 
     try {
-      await sendRequest("http://localhost:8080/admin/add-anime", "post", fd, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: "Bearer " + authCtx.token,
-        },
-      });
+      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-anime`, "post", fd);
       cleanFields();
     } catch (error) {
       return;
@@ -122,7 +116,7 @@ const AddAnime = () => {
   };
 
   return (
-    <div className={styles.formContainer}>
+    <div className="formContainer">
       <form noValidate onSubmit={onSubmitHandler}>
         {message !== "" && (
           <div className="alert alert-success" role="alert">
@@ -145,10 +139,10 @@ const AddAnime = () => {
             onChange={onTitleChangeHandler}
           />
           {!titleIsValid && titleIsTouched && (
-            <p className={styles.error}>Invalid title.</p>
+            <p className="error">Invalid title.</p>
           )}
           {errors.length > 0 && errors[0].msg != null && (
-            <p className={styles.error}>Invalid title.</p>
+            <p className="error">Invalid title.</p>
           )}
         </div>
         <div className="form-group">
@@ -168,10 +162,10 @@ const AddAnime = () => {
             <option>Seinen</option>
           </select>
           {!genreIsValid && genreIsTouched && (
-            <p className={styles.error}>Invalid genre.</p>
+            <p className="error">Invalid genre.</p>
           )}
           {errors.length > 0 && errors[1].msg != null && (
-            <p className={styles.error}>Invalid genre.</p>
+            <p className="error">Invalid genre.</p>
           )}
         </div>
         <div className="form-group">
@@ -185,10 +179,10 @@ const AddAnime = () => {
             onChange={onDescriptionChangeHandler}
           ></textarea>
           {!descriptionIsValid && descriptionIsTouched && (
-            <p className={styles.error}>Invalid description.</p>
+            <p className="error">Invalid description.</p>
           )}
           {errors.length > 0 && errors[2].msg != null && (
-            <p className={styles.error}>Invalid description.</p>
+            <p className="error">Invalid description.</p>
           )}
         </div>
         <div className="form-group">
@@ -205,10 +199,10 @@ const AddAnime = () => {
             onChange={onImageChangeHandler}
           />
           {!imageIsValid && imageIsTouched && (
-            <p className={styles.error}>Invalid image.</p>
+            <p className="error">Invalid image.</p>
           )}
           {errors.length > 0 && errors[3].msg != null && (
-            <p className={styles.error}>Invalid image.</p>
+            <p className="error">Invalid image.</p>
           )}
         </div>
         <div className="form-group">
@@ -222,10 +216,10 @@ const AddAnime = () => {
             onChange={onReleaseDateChangeHandler}
           />
           {!releaseDateIsValid && releaseDateIsTouched && (
-            <p className={styles.error}>Invalid release date.</p>
+            <p className="error">Invalid release date.</p>
           )}
           {errors.length > 0 && errors[4].msg != null && (
-            <p className={styles.error}>Invalid release date.</p>
+            <p className="error">Invalid release date.</p>
           )}
         </div>
         <div className="form-group">
@@ -240,10 +234,10 @@ const AddAnime = () => {
             onChange={onEpisodesChangeHandler}
           />
           {!episodesIsValid && episodesIsTouched && (
-            <p className={styles.error}>Invalid episode.</p>
+            <p className="error">Invalid episode.</p>
           )}
           {errors.length > 0 && errors[5].msg != null && (
-            <p className={styles.error}>Invalid episode.</p>
+            <p className="error">Invalid episode.</p>
           )}
         </div>
         <div className="form-group">
@@ -257,16 +251,16 @@ const AddAnime = () => {
             onChange={onTrailerChangeHandler}
           />
           {!trailerIsValid && trailerIsTouched && (
-            <p className={styles.error}>Invalid trailer.</p>
+            <p className="error">Invalid trailer.</p>
           )}
           {errors.length > 0 && errors[6].msg != null && (
-            <p className={styles.error}>Invalid trailer.</p>
+            <p className="error">Invalid trailer.</p>
           )}
         </div>
         {!spinner && (
           <button
             type="submit"
-            className={`btn ${styles.btnYellow}`}
+            className="btn btnYellow"
             disabled={isFormValid}
           >
             Save

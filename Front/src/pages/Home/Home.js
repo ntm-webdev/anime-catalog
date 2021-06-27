@@ -3,11 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { fetchAnimes } from "../../store/reducers/animes";
 import { AuthContext } from "../../context/auth-context";
-import styles from "./Home.module.css";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Anime from "../../components/Anime/Anime";
 
-const AnimeSection = () => {
+const Home = () => {
   const authCtx = useContext(AuthContext);
   const dispatch = useDispatch();
 
@@ -16,7 +15,7 @@ const AnimeSection = () => {
   const error = useSelector((state) => state.animes.error);
 
   useEffect(() => {
-    dispatch(fetchAnimes(`http://localhost:8080/animes`));
+    dispatch(fetchAnimes(`${process.env.REACT_APP_BASE_URL}/animes`));
   }, []);
 
   let content;
@@ -24,13 +23,13 @@ const AnimeSection = () => {
     content = <Spinner />;
   } else if (animes.length <= 0) {
     content = (
-      <div className={`row ${styles.breath}`}>
-        {authCtx.userName !== "" && (
-          <h2 style={{ color: "yellow", marginTop: "1rem" }}>
+      <div className="row breath">
+        {authCtx.userName !== null && (
+          <h2 className="yellow-message">
             {`Hello, ${authCtx.userName}`}
           </h2>
         )}
-        <p style={{ backgroundColor: "black", color: "white" }}>
+        <p className="default-message">
           No animes were found.
         </p>
       </div>
@@ -38,16 +37,16 @@ const AnimeSection = () => {
   } else {
     content = (
       <>
-        {authCtx.userName !== "" && (
-          <h2 style={{ color: "yellow", marginTop: "1rem" }}>
+        {authCtx.userName !== null && (
+          <h2 className="yellow-message">
             {`Hello, ${authCtx.userName}`}
           </h2>
         )}
-        <div className={`row ${styles.breath}`}>
+        <div className="row breath">
           {animes.map((anime) => (
             <Anime
               key={anime._id}
-              id={anime._id}
+              animeId={anime._id}
               title={anime.title}
               genre={anime.genre}
               rating={anime.rating > -1 ? anime.rating.toFixed(2) : "N/A"}
@@ -64,10 +63,10 @@ const AnimeSection = () => {
       {!error ? (
         content
       ) : (
-        <p style={{ backgroundColor: "black", color: "red" }}>{error}</p>
+        <p className="error-message">{error}</p>
       )}
     </div>
   );
 };
 
-export default AnimeSection;
+export default Home;

@@ -6,7 +6,7 @@ import useHttp from "../../hooks/use-http";
 import { AuthContext } from "../../context/auth-context";
 import Spinner from "../UI/Spinner/Spinner";
 
-const Feedback = (props) => {
+const Feedback = ({ animeId, fetchData, animeRating, animeComment, feedbackId, editMode }) => {
   const authCtx = useContext(AuthContext);
   const { sendRequest, spinner, message, error, errors } = useHttp();
 
@@ -34,33 +34,26 @@ const Feedback = (props) => {
     }
 
     let data;
-    if (props.editMode) {
+    if (editMode) {
       data = {
         rating,
         comment,
         userId: authCtx.userId,
-        animeId: props.animeId,
-        feedbackId: props.feedbackId,
+        animeId: animeId,
+        feedbackId: feedbackId,
       };
     } else {
       data = {
         rating,
         comment,
         userId: authCtx.userId,
-        animeId: props.animeId,
+        animeId: animeId,
       };
     }
 
     try {
-      await sendRequest(
-        "http://localhost:8080/admin/add-feedback",
-        "post",
-        data,
-        {
-          headers: { Authorization: "Bearer " + authCtx.token },
-        }
-      );
-      props.fetchData();
+      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-feedback`, "post", data);
+      fetchData();
     } catch (error) {
       return;
     }
@@ -88,15 +81,15 @@ const Feedback = (props) => {
             id="rating"
             min="0"
             max="10"
-            defaultValue={props.rating}
+            defaultValue={animeRating}
             onBlur={onRatingChangeHandler}
             onChange={onRatingChangeHandler}
           />
           {!ratingIsValid && ratingIsTouched && (
-            <p className={styles.error}>Invalid rating.</p>
+            <p className="error">Invalid rating.</p>
           )}
           {errors.length > 0 && errors[0].msg != null && (
-            <p className={styles.error}>Invalid rating.</p>
+            <p className="error">Invalid rating.</p>
           )}
         </div>
         <div className="form-group">
@@ -105,18 +98,18 @@ const Feedback = (props) => {
             className="form-control"
             id="comment"
             rows="3"
-            defaultValue={props.comment}
+            defaultValue={animeComment}
             onBlur={onCommentChangeHandler}
             onChange={onCommentChangeHandler}
           ></textarea>
           {!commentIsValid && commentIsTouched && (
-            <p className={styles.error}>Invalid comment.</p>
+            <p className="error">Invalid comment.</p>
           )}
           {errors.length > 0 && errors[1].msg != null && (
-            <p className={styles.error}>Invalid comment.</p>
+            <p className="error">Invalid comment.</p>
           )}
         </div>
-        <button className={`btn ${styles.btnYellow}`} disabled={isFormValid}>
+        <button className="btn btnYellow" disabled={isFormValid}>
           POST
         </button>
         &nbsp;

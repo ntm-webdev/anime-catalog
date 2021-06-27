@@ -8,6 +8,7 @@ import Modal from "../../components/UI/Modal/Modal";
 import Feedback from "../../components/Feedback/Feedback";
 import useHttp from "../../hooks/use-http";
 import Trailer from "../../components/Trailer/Trailer";
+import { axiosInstance } from '../../lib/axios';
 
 const getFormatedDate = (date) => {
   return (
@@ -54,10 +55,7 @@ const AnimeView = () => {
     setShowModal(false);
     setEditMode(false);
     try {
-      const res = await sendRequest(
-        `http://localhost:8080/anime/${params.id}`,
-        "get"
-      );
+      const res = await sendRequest(`${process.env.REACT_APP_BASE_URL}/anime/${params.id}`, "get");
       setAnime(res);
       setRating(null);
       setComment(null);
@@ -78,20 +76,11 @@ const AnimeView = () => {
   };
 
   const removeFeedBackHandler = async (u_id, a_id, f_id) => {
-    const res = window.confirm(
-      `Are you sure you want to remove your feedback from the following anime: ${anime.title}?`
-    );
+    const res = window.confirm(`Are you sure you want to remove your feedback from the following anime: ${anime.title}?`);
     if (res) {
       try {
-        await sendRequest(
-          `http://localhost:8080/admin/remove-feedback`,
-          "delete",
-          null,
-          {
-            headers: { Authorization: "Bearer " + authCtx.token },
-            data: { userId: u_id, animeId: a_id, feedbackId: f_id },
-          }
-        );
+        const data = { data: { userId: u_id, animeId: a_id, feedbackId: f_id } };
+        await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/remove-feedback`, "delete", data);
         fetchData();
       } catch (error) {
         return;
@@ -104,14 +93,7 @@ const AnimeView = () => {
   const addToMyWatchListHandler = async (isAdding) => {
     const data = { userId: authCtx.userId, animeId: params.id, isAdding };
     try {
-      await sendRequest(
-        "http://localhost:8080/admin/add-watchlist",
-        "post",
-        data,
-        {
-          headers: { Authorization: "Bearer " + authCtx.token },
-        }
-      );
+      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-watchlist`, "post", data);
       await fetchData();
     } catch (error) {
       return;
@@ -154,7 +136,7 @@ const AnimeView = () => {
           <div className="row">
             <div className="col-sm-12 col-md-4">
               <img
-                src={`http://localhost:8080/images/${anime.image}`}
+                src={`${process.env.REACT_APP_BASE_URL}/images/${anime.image}`}
                 alt={anime.title}
                 className={styles.animeImg}
               />
@@ -182,7 +164,7 @@ const AnimeView = () => {
           <div className="row">
             <div className="col-sm-12">
               <div className={`${styles.section} ${styles.sectionBlack}`}>
-                <Trailer trailer={trailer} />
+                <Trailer trailerUrl={trailer} />
               </div>
             </div>
           </div>
@@ -209,7 +191,7 @@ const AnimeView = () => {
                           {authCtx.userId === feedback.userid._id && (
                             <div className="btn-group">
                               <button
-                                className={`btn btn-success`}
+                                className="btn btn-success"
                                 onClick={() =>
                                   showModalHandler(
                                     true,
@@ -224,7 +206,7 @@ const AnimeView = () => {
                               </button>
                               &nbsp;
                               <button
-                                className={`btn btn-danger`}
+                                className="btn btn-danger"
                                 onClick={() =>
                                   removeFeedBackHandler(
                                     authCtx.userId,
@@ -257,8 +239,8 @@ const AnimeView = () => {
               <Feedback
                 animeId={anime._id}
                 fetchData={fetchData}
-                rating={rating}
-                comment={comment}
+                animeRating={rating}
+                animeComment={comment}
                 feedbackId={feedbackId}
                 editMode={editMode}
               />

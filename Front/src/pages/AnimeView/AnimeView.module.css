@@ -1,86 +1,86 @@
 .animeImg {
-    max-width: 100%;
+  max-width: 100%;
 }
 
 .animeContainer {
-    background-color: rgba(37, 34, 34, .90);
-    border-radius: 8px;
-    color: #fff;
-    width: 90%;
-    margin: 0 auto;
+  background-color: rgba(37, 34, 34, 0.9);
+  border-radius: 8px;
+  color: #fff;
+  width: 90%;
+  margin: 0 auto;
 }
 
 .main {
-    padding: 1rem;
+  padding: 1rem;
 }
 
 .main h2,
 .main p,
 .main button,
 .main .genre {
-    margin-bottom: 3rem;
+  margin-bottom: 3rem;
 }
 
 .genre span {
-    background-color: yellow;
-    color: black;
-    border-radius: 4px;
-    padding: 4px;
-    margin-left: 4px;
+  background-color: yellow;
+  color: black;
+  border-radius: 4px;
+  padding: 4px;
+  margin-left: 4px;
 }
 
 .additionalInformation {
-    background-color: black;
-    padding: 1rem;
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    border-top: 1px solid white;
+  background-color: black;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  border-top: 1px solid white;
 }
 
 .section {
-    padding: 1rem 0px 1rem 0.2rem;
+  padding: 1rem 0px 1rem 0.2rem;
 }
 
 .sectionBlack {
-    color: #fff;
-    border-top: 1px solid white;
-    background-color: black;
+  color: #fff;
+  border-top: 1px solid white;
+  background-color: black;
 }
 
 .feedbackSection {
-    height: 250px;
-    overflow: auto;
-    padding: .5rem;
+  height: 250px;
+  overflow: auto;
+  padding: 0.5rem;
 }
 
 .feedback,
 .noFeedback {
-    background-color: #cccccc;
-    color: black;
-    padding: 8px 8px 0px 8px;
-    margin-top: 3px;
-    border-radius: 10px;
-    display: block;
+  background-color: #cccccc;
+  color: black;
+  padding: 8px 8px 0px 8px;
+  margin-top: 3px;
+  border-radius: 10px;
+  display: block;
 }
 
 .feedback {
-    flex-direction: column;
-    display: flex;
+  flex-direction: column;
+  display: flex;
 }
 
 .noFeedback {
-    margin-top: 10px;
-    padding: 12px;
+  margin-top: 10px;
+  padding: 12px;
 }
 
 .feedbackTitle,
 .feedbackTitleNoPadding {
-    padding: 0.3rem;
-    display: flex;
-    justify-content: space-between;
+  padding: 0.3rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 .feedbackTitleNoPadding {
-    padding: 0;
+  padding: 0;
 }

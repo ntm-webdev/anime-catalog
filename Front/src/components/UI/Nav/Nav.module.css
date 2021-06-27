@@ -1,70 +1,70 @@
 .menu {
-    display: flex;
-    justify-content: space-around;
-    background-color: black;
-    padding: 1rem;
-    align-items: baseline;
-    border-bottom: 1px solid yellow;
+  display: flex;
+  justify-content: space-around;
+  background-color: black;
+  padding: 1rem;
+  align-items: baseline;
+  border-bottom: 1px solid yellow;
 }
 
 .logo {
-    color: yellow;
-    font-size: 24px;
+  color: yellow;
+  font-size: 24px;
 }
 
 .logo:hover {
-    color: #999900;
-    text-decoration: none;
-    cursor: pointer;
+  color: #999900;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .menuOptions {
-    display: flex;
-    list-style: none;
+  display: flex;
+  list-style: none;
 }
 
 .menuOptions li {
-    margin-left: 1rem;
+  margin-left: 1rem;
 }
 
 .menuOptions li span {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .menuOptions li a,
 .menuOptions li span {
-    color: yellow;
-    text-decoration: none;
-    padding: 10px;
+  color: yellow;
+  text-decoration: none;
+  padding: 10px;
 }
 
 .menuOptions li a:hover,
 .menuOptions li span:hover {
-    color: black;
-    background-color: yellow;
+  color: black;
+  background-color: yellow;
 }
 
-@media (min-width:320px) and (max-width:480px) {
-    .menu {
-        padding-bottom: 0.2rem;
-    }
+@media (min-width: 320px) and (max-width: 480px) {
+  .menu {
+    padding-bottom: 0.2rem;
+  }
 
-    .menu,
-    .menuOptions {
-        display: block;
-        text-align: center;
-    }
+  .menu,
+  .menuOptions {
+    display: block;
+    text-align: center;
+  }
 
-    .textbox {
-        display: block;
-        margin: 0 auto;
-        padding-top: 0.5rem;
-    }
+  .textbox {
+    display: block;
+    margin: 0 auto;
+    padding-top: 0.5rem;
+  }
 
-    .menuOptions,
-    .menuOptions li,
-    .menuOptions li a {
-        margin: 0;
-        padding: 0.2rem 0;
-    }
+  .menuOptions,
+  .menuOptions li,
+  .menuOptions li a {
+    margin: 0;
+    padding: 0.2rem 0;
+  }
 }

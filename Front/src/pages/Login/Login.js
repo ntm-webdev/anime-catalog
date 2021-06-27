@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import useHttp from "../../hooks/use-http";
 import useInput from "../../hooks/use-input";
-import styles from "./Login.module.css";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import { AuthContext } from '../../context/auth-context';
 
@@ -41,18 +40,16 @@ const Login = () => {
 
     let userData;
     try {
-      userData = await sendRequest('http://localhost:8080/login', 'post', data);
+      userData = await sendRequest(`${process.env.REACT_APP_BASE_URL}/login`, 'post', data);
       authCtx.login(userData.token, userData.userId, userData.name);
-      window.setTimeout(() => {
-        history.replace('/')
-      }, 1500);
+      history.replace('/');
     } catch (err) {
       return;
     }
   };
 
   return (
-    <div className={styles.formContainer}>
+    <div className="formContainer">
       <form noValidate onSubmit={onSubmitHandler}>
         {message && <div className="alert alert-success" role="alert">{message}</div>}
         {error !== '' && <div className="alert alert-danger" role="alert">{error}</div>}
@@ -67,10 +64,10 @@ const Login = () => {
             onChange={onEmailChangeHandler}
           />
           {!emailIsValid && emailIsTouched && (
-            <p className={styles.error}>Invalid email.</p>
+            <p className="error">Invalid email.</p>
           )}
           {errors != null && errors.length > 0 && errors[0].msg != null && (
-            <p className={styles.error}>Invalid email.</p>
+            <p className="error">Invalid email.</p>
           )}
         </div>
         <div className="form-group">
@@ -84,16 +81,16 @@ const Login = () => {
             onChange={onPasswordChangeHandler}
           />
           {!passwordIsValid && passwordIsTouched && (
-            <p className={styles.error}>Invalid password.</p>
+            <p className="error">Invalid password.</p>
           )}
           {errors != null && errors.length > 0 && errors[1].msg != null && (
-            <p className={styles.error}>Invalid password.</p>
+            <p className="error">Invalid password.</p>
           )}
         </div>
         {!spinner && (
           <button
             type="submit"
-            className={`btn ${styles.btnYellow}`}
+            className="btn btnYellow"
             disabled={isFormValid}
           >
             Login

@@ -13,13 +13,9 @@ const Nav = () => {
 
   const searchHandler = (event) => {
     if (event.target.value === "") {
-      dispatch(fetchAnimes(`http://localhost:8080/animes`));
+      dispatch(fetchAnimes(`${process.env.REACT_APP_BASE_URL}/animes`));
     } else {
-      dispatch(
-        fetchAnimes(
-          `http://localhost:8080/animes?sort=title:${event.target.value}`
-        )
-      );
+      dispatch(fetchAnimes(`${process.env.REACT_APP_BASE_URL}/animes?sort=title:${event.target.value}`));
     }
   };
 

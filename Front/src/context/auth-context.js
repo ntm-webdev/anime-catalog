@@ -5,14 +5,16 @@ export const AuthContext = React.createContext({
   token: "",
   userId: "",
   userName: "",
-  login: (u_token, u_id, u_name) => {},
+  login: (token, userId, userName) => {},
   logout: () => {},
 });
 
-const AuthProvider = (props) => {
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
-  const [userName, setUserName] = useState("");
+const AuthProvider = ({ children }) => {
+  const [authenticatedData, setAuthenticatedData] = useState({
+    token: null,
+    userId: null,
+    userName: null,
+  });
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("userData"));
@@ -21,35 +23,32 @@ const AuthProvider = (props) => {
     }
   }, []);
 
-  const loginHandler = (u_token, u_id, u_name) => {
-    setToken(u_token);
-    setUserId(u_id);
-    setUserName(u_name);
-    localStorage.setItem(
-      "userData",
-      JSON.stringify({ token: u_token, userId: u_id, userName: u_name })
-    );
+  const loginHandler = (token, userId, userName) => {
+    setAuthenticatedData({ token, userId, userName });
+    localStorage.setItem("userData", JSON.stringify({ token, userId, userName }));
   };
 
   const logoutHandler = () => {
-    setToken("");
-    setUserId("");
-    setUserName("");
+    setAuthenticatedData({
+      token: null,
+      userId: null,
+      userName: null,
+    });
     localStorage.removeItem("userData");
   };
 
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: !!token,
-        token: token,
-        userId: userId,
-        userName: userName,
+        isLoggedIn: !!authenticatedData.token,
+        token: authenticatedData.token,
+        userId: authenticatedData.userId,
+        userName: authenticatedData.userName,
         login: loginHandler,
         logout: logoutHandler,
       }}
     >
-      {props.children}
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import useInput from "../../hooks/use-input";
 import useHttp from "../../hooks/use-http";
-import styles from "./SignUp.module.css";
 import Spinner from "../../components/UI/Spinner/Spinner";
 
 const regEmail = /\w+@\w+\.\w{2,10}/;
@@ -74,26 +73,18 @@ const SignIn = () => {
     fd.append("image", image);
 
     try {
-      const userData = await sendRequest(
-        "http://localhost:8080/signup",
-        "post",
-        fd,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: "Bearer " + authCtx.token,
-          },
-        }
-      );
+      const userData = await sendRequest(`${process.env.REACT_APP_BASE_URL}/signup`, "post", fd);
       authCtx.login(userData.token, userData.userId, userData.name);
-      history.replace("/");
+      window.setTimeout(() => {
+        history.replace("/");
+      }, 1000);
     } catch (err) {
       return;
     }
   };
 
   return (
-    <div className={styles.formContainer}>
+    <div className="formContainer">
       <form noValidate onSubmit={onSubmitHandler}>
         {message.length > 0 && (
           <div className="alert alert-success" role="alert">
@@ -116,10 +107,10 @@ const SignIn = () => {
             onChange={onNameChangeHandler}
           />
           {!nameIsValid && nameIsTouched && (
-            <p className={styles.error}>Invalid name.</p>
+            <p className="error">Invalid name.</p>
           )}
           {errors.length > 0 && errors[0].msg != null && (
-            <p className={styles.error}>Invalid name.</p>
+            <p className="error">Invalid name.</p>
           )}
         </div>
         <div className="form-group">
@@ -133,10 +124,10 @@ const SignIn = () => {
             onChange={onEmailChangeHandler}
           />
           {!emailIsValid && emailIsTouched && (
-            <p className={styles.error}>Invalid email.</p>
+            <p className="error">Invalid email.</p>
           )}
           {errors.length > 0 && errors[1].msg != null && (
-            <p className={styles.error}>Invalid email.</p>
+            <p className="error">Invalid email.</p>
           )}
         </div>
         <div className="form-group">
@@ -150,10 +141,10 @@ const SignIn = () => {
             onChange={onPasswordChangeHandler}
           />
           {!passwordIsValid && passwordIsTouched && (
-            <p className={styles.error}>Invalid password.</p>
+            <p className="error">Invalid password.</p>
           )}
           {errors.length > 0 && errors[2].msg != null && (
-            <p className={styles.error}>Invalid password.</p>
+            <p className="error">Invalid password.</p>
           )}
         </div>
         <div className="form-group">
@@ -170,10 +161,10 @@ const SignIn = () => {
           {!confPasswordIsValid &&
             confPasswordIsTouched &&
             confPassword !== password && (
-              <p className={styles.error}>The passwords don't match.</p>
+              <p className="error">The passwords don't match.</p>
             )}
           {errors.length > 0 && errors[3].msg != null && (
-            <p className={styles.error}>The passwords don't match.</p>
+            <p className="error">The passwords don't match.</p>
           )}
         </div>
         <div className="form-group">
@@ -189,13 +180,13 @@ const SignIn = () => {
             onChange={onImageChangeHandler}
           />
           {!imageIsValid && imageIsTouched && (
-            <p className={styles.error}>Invalid image.</p>
+            <p className="error">Invalid image.</p>
           )}
         </div>
         {!spinner && (
           <button
             type="submit"
-            className={`${styles.btnYellow}`}
+            className="btn btnYellow"
             disabled={isFormValid}
           >
             Sign in

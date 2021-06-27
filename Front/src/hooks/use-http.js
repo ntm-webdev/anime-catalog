@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
-import axios from "axios";
+
+import { axiosInstance } from "../lib/axios";
 
 const useHttp = () => {
   const [error, setError] = useState("");
@@ -8,22 +9,22 @@ const useHttp = () => {
   const [message, setMessage] = useState("");
 
   const sendRequest = useCallback(
-    async (url, method, data = null, extraConfig = null) => {
+    async (url, method, data = null) => {
       let response;
       setSpinner(true);
 
       try {
         if (method === "get") {
-          const res = await axios.get(url, extraConfig);
+          const res = await axiosInstance.get(url, data);
           response = res.data.fetchedData;
         } else if (method === "delete") {
-          const res = await axios.delete(url, extraConfig);
+          const res = await axiosInstance.delete(url, data);
           response = res.data;
         } else {
-          const res = await axios.post(url, data, extraConfig);
+          const res = await axiosInstance.post(url, data);
           response = res.data;
           setMessage(response.msg);
-          setTimeout(() => {
+          window.setTimeout(() => {
             setMessage("");
           }, 1500);
         }

@@ -1,47 +1,47 @@
 .customCard {
-    transition: transform .3s !important;
-    background: rgba(0, 0, 0, 0.5);
-    border: 1px solid white;
+  transition: transform 0.3s !important;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid white;
 }
 
 .customCard h5,
 .customCard p {
-    color: white;
+  color: white;
 }
 
 .customCard:hover {
-    transform: scale(1.03);
+  transform: scale(1.03);
 }
 
 .cardImage {
-    width: 100%;
-    height: 15vw;
-    object-fit: cover;
+  width: 100%;
+  height: 15vw;
+  object-fit: cover;
 }
 
 .cardBodyRating {
-    position: absolute;
-    right: 3px;
-    top: 1px;
-    background-color: #212529;
-    padding: 5px;
-    color: #ffc107;
-    text-align: center;
-    display: block;
-    z-index: 100;
-    min-width: 30px;
-    font-size: .8em;
-    border-radius: 50%;
-    border: 2px solid #343a40;
+  position: absolute;
+  right: 3px;
+  top: 1px;
+  background-color: #212529;
+  padding: 5px;
+  color: #ffc107;
+  text-align: center;
+  display: block;
+  z-index: 100;
+  min-width: 30px;
+  font-size: 0.8em;
+  border-radius: 50%;
+  border: 2px solid #343a40;
 }
 
 .anchor,
 .anchor:hover {
-    text-decoration: none !important;
+  text-decoration: none !important;
 }
 
-@media (min-width:320px) and (max-width:768px) {
-    .cardImage {
-        height: 50vw;
-    }
+@media (min-width: 320px) and (max-width: 768px) {
+  .cardImage {
+    height: 50vw;
+  }
 }

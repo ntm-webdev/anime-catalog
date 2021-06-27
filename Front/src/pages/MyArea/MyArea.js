@@ -13,25 +13,18 @@ const MyArea = () => {
   const [user, setUser] = useState();
   const { sendRequest, spinner, error } = useHttp();
 
-  if (!authCtx.isLoggedIn) {
-    history.replace("/");
-  }
-
   useEffect(() => {
+    if (!authCtx.isLoggedIn) {
+      history.replace("/");
+      return;
+    }
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    const data = { params: { userId: authCtx.userId } };
     try {
-      const res = await sendRequest(
-        "http://localhost:8080/admin/my-area",
-        "get",
-        null,
-        {
-          headers: { Authorization: "Bearer " + authCtx.token },
-          params: { userId: authCtx.userId },
-        }
-      );
+      const res = await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/my-area`, "get", data);
       setUser(res);
     } catch (err) {
       return;
@@ -41,14 +34,7 @@ const MyArea = () => {
   const removeFromMyWatchListHandler = async (animeId, isAdding) => {
     const data = { userId: authCtx.userId, animeId, isAdding };
     try {
-      await sendRequest(
-        "http://localhost:8080/admin/add-watchlist",
-        "post",
-        data,
-        {
-          headers: { Authorization: "Bearer " + authCtx.token },
-        }
-      );
+      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-watchlist`, "post", data);
       await fetchData();
     } catch (error) {
       return;
@@ -65,8 +51,9 @@ const MyArea = () => {
           <div className="col-sm-12">
             <div className={styles.banner}>
               <img
+                alt={user.name}
                 className={styles.profilePicture}
-                src={`http://localhost:8080/images/${user.image}`}
+                src={`${process.env.REACT_APP_BASE_URL}/images/${user.image}`}
               />
             </div>
           </div>
