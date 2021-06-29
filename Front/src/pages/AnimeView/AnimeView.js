@@ -8,7 +8,6 @@ import Modal from "../../components/UI/Modal/Modal";
 import Feedback from "../../components/Feedback/Feedback";
 import useHttp from "../../hooks/use-http";
 import Trailer from "../../components/Trailer/Trailer";
-import { axiosInstance } from '../../lib/axios';
 
 const getFormatedDate = (date) => {
   return (
@@ -31,7 +30,7 @@ const getAnimeRating = (rating) => {
 const AnimeView = () => {
   const params = useParams();
   const authCtx = useContext(AuthContext);
-  const { sendRequest, spinner, error } = useHttp();
+  const { sendRequest, spinner, message } = useHttp();
   const [anime, setAnime] = useState();
   const [showModal, setShowModal] = useState(false);
   const [rating, setRating] = useState();
@@ -132,130 +131,126 @@ const AnimeView = () => {
 
     content = (
       <>
-        <div className={`container ${styles.animeContainer}`}>
-          <div className="row">
-            <div className="col-sm-12 col-md-4">
-              <img
-                src={`${process.env.REACT_APP_BASE_URL}/images/${anime.image}`}
-                alt={anime.title}
-                className={styles.animeImg}
-              />
-            </div>
-            <div className={`col-sm-12 col-md-8 ${styles.main}`}>
-              <h2>{anime.title}</h2>
-              {watchListButton}
-              <p>{anime.description}</p>
-              <div className={styles.genre}>
-                Genre: <span>{anime.genre}</span>
-              </div>
+        <div className="row">
+          <div className="col-sm-12 col-md-4">
+            <img
+              src={`${process.env.REACT_APP_BASE_URL}/images/${anime.image}`}
+              alt={anime.title}
+              className={styles.animeImg}
+            />
+          </div>
+          <div className={`col-sm-12 col-md-8 ${styles.main}`}>
+            <h2>{anime.title}</h2>
+            {watchListButton}
+            <p>{anime.description}</p>
+            <div className={styles.genre}>
+              Genre: <span>{anime.genre}</span>
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-12">
-              <div className={styles.additionalInformation}>
-                <span>Release date: {formatedDate}</span>
-                <span>
-                  Rating: {animeRating}
-                </span>
-                <span>Episodes: {anime.episodes}</span>
-              </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            <div className={styles.additionalInformation}>
+              <span>Release date: {formatedDate}</span>
+              <span>
+                Rating: {animeRating}
+              </span>
+              <span>Episodes: {anime.episodes}</span>
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-12">
-              <div className={`${styles.section} ${styles.sectionBlack}`}>
-                <Trailer trailerUrl={trailer} />
-              </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            <div className={`${styles.section} ${styles.sectionBlack}`}>
+              <Trailer trailerUrl={trailer} />
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-12">
-              <div className={`${styles.section} ${styles.sectionBlack}`}>
-                <div className={styles.feedbackTitle}>
-                  <h2>Feedbacks</h2>&nbsp;
-                  {anime && authCtx.isLoggedIn && !isAuthor && (
-                    <button
-                      className="btn btn-success"
-                      onClick={() => showModalHandler(false)}
-                    >
-                      Add your feedback
-                    </button>
-                  )}
-                </div>
-                {anime && anime.feedback.length > 0 ? (
-                  <div className={styles.feedbackSection}>
-                    {anime.feedback.map((feedback) => (
-                      <div key={feedback._id} className={styles.feedback}>
-                        <div className={styles.feedbackTitleNoPadding}>
-                          <h5>{feedback.userid.name} says:</h5>
-                          {authCtx.userId === feedback.userid._id && (
-                            <div className="btn-group">
-                              <button
-                                className="btn btn-success"
-                                onClick={() =>
-                                  showModalHandler(
-                                    true,
-                                    feedback.rating,
-                                    feedback.comment,
-                                    feedback._id
-                                  )
-                                }
-                              >
-                                <i className="fa fa-edit"></i>
-                                &nbsp;Edit
-                              </button>
-                              &nbsp;
-                              <button
-                                className="btn btn-danger"
-                                onClick={() =>
-                                  removeFeedBackHandler(
-                                    authCtx.userId,
-                                    params.id,
-                                    feedback._id
-                                  )
-                                }
-                              >
-                                <i className="fa fa-trash"></i>
-                                &nbsp;Remove
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                        <strong>Rating: {feedback.rating}</strong>
-                        <p>{feedback.comment}</p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className={styles.noFeedback}>
-                    <strong>This anime has no feedback for now.</strong>
-                  </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            <div className={`${styles.section} ${styles.sectionBlack}`}>
+              <div className={styles.feedbackTitle}>
+                <h2>Feedbacks</h2>&nbsp;
+                {anime && authCtx.isLoggedIn && !isAuthor && (
+                  <button
+                    className="btn btn-success"
+                    onClick={() => showModalHandler(false)}
+                  >
+                    Add your feedback
+                  </button>
                 )}
               </div>
+              {anime && anime.feedback.length > 0 ? (
+                <div className={styles.feedbackSection}>
+                  {anime.feedback.map((feedback) => (
+                    <div key={feedback._id} className={styles.feedback}>
+                      <div className={styles.feedbackTitleNoPadding}>
+                        <h5>{feedback.userid.name} says:</h5>
+                        {authCtx.userId === feedback.userid._id && (
+                          <div className="btn-group">
+                            <button
+                              className="btn btn-success"
+                              onClick={() =>
+                                showModalHandler(
+                                  true,
+                                  feedback.rating,
+                                  feedback.comment,
+                                  feedback._id
+                                )
+                              }
+                            >
+                              <i className="fa fa-edit"></i>
+                              &nbsp;Edit
+                            </button>
+                            &nbsp;
+                            <button
+                              className="btn btn-danger"
+                              onClick={() =>
+                                removeFeedBackHandler(
+                                  authCtx.userId,
+                                  params.id,
+                                  feedback._id
+                                )
+                              }
+                            >
+                              <i className="fa fa-trash"></i>
+                              &nbsp;Remove
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <strong>Rating: {feedback.rating}</strong>
+                      <p>{feedback.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={styles.noFeedback}>
+                  <strong>This anime has no feedback for now.</strong>
+                </div>
+              )}
             </div>
           </div>
-          {showModal && (
-            <Modal onClose={showModalHandler}>
-              <Feedback
-                animeId={anime._id}
-                fetchData={fetchData}
-                animeRating={rating}
-                animeComment={comment}
-                feedbackId={feedbackId}
-                editMode={editMode}
-              />
-            </Modal>
-          )}
         </div>
+        {showModal && (
+          <Modal onClose={showModalHandler}>
+            <Feedback
+              animeId={anime._id}
+              fetchData={fetchData}
+              animeRating={rating}
+              animeComment={comment}
+              feedbackId={feedbackId}
+              editMode={editMode}
+            />
+          </Modal>
+        )}
       </>
     );
   }
 
-  return !error ? (
-    content
-  ) : (
-    <div className="container">
-      <p>{error}</p>
+  return (
+    <div className={`container ${styles.animeContainer}`}>
+      {message.msg ? <p>{message.msg}</p> : content}
     </div>
   );
 };

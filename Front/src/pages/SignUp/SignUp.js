@@ -48,7 +48,7 @@ const SignIn = () => {
     isTouched: imageIsTouched,
   } = useInput((value) => value.length > 0);
 
-  const { sendRequest, spinner, message, error, errors } = useHttp();
+  const { sendRequest, spinner, message, errors } = useHttp();
 
   const isFormValid =
     !nameIsValid ||
@@ -75,9 +75,9 @@ const SignIn = () => {
     try {
       const userData = await sendRequest(`${process.env.REACT_APP_BASE_URL}/signup`, "post", fd);
       authCtx.login(userData.token, userData.userId, userData.name);
-      window.setTimeout(() => {
+      setTimeout(() => {
         history.replace("/");
-      }, 1000);
+      }, 1500);
     } catch (err) {
       return;
     }
@@ -86,16 +86,7 @@ const SignIn = () => {
   return (
     <div className="formContainer">
       <form noValidate onSubmit={onSubmitHandler}>
-        {message.length > 0 && (
-          <div className="alert alert-success" role="alert">
-            {message}
-          </div>
-        )}
-        {error !== "" && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
+        {message.msg && <div className={`alert ${message.success ? 'alert-success' : 'alert-danger'}`} role="alert">{message.msg}</div>}
         <div className="form-group">
           <label htmlFor="name">Name</label>
           <input
@@ -180,6 +171,9 @@ const SignIn = () => {
             onChange={onImageChangeHandler}
           />
           {!imageIsValid && imageIsTouched && (
+            <p className="error">Invalid image.</p>
+          )}
+          {errors.length > 0 && errors[4].msg != null && (
             <p className="error">Invalid image.</p>
           )}
         </div>

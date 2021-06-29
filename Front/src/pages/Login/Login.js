@@ -11,8 +11,8 @@ const regEmail = /\w+@\w+\.\w{2,10}/;
 const Login = () => {
   const history = useHistory();
   const authCtx = useContext(AuthContext);
-  const { sendRequest, spinner, message, error, errors } = useHttp();
-  
+  const { sendRequest, spinner, message, errors } = useHttp();
+
   const {
     onChangeHandler: onEmailChangeHandler,
     isValid: emailIsValid,
@@ -51,8 +51,7 @@ const Login = () => {
   return (
     <div className="formContainer">
       <form noValidate onSubmit={onSubmitHandler}>
-        {message && <div className="alert alert-success" role="alert">{message}</div>}
-        {error !== '' && <div className="alert alert-danger" role="alert">{error}</div>}
+        {message.msg && <div className={`alert ${message.success ? 'alert-success' : 'alert-danger'}`} role="alert">{message.msg}</div>}
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
@@ -66,7 +65,7 @@ const Login = () => {
           {!emailIsValid && emailIsTouched && (
             <p className="error">Invalid email.</p>
           )}
-          {errors != null && errors.length > 0 && errors[0].msg != null && (
+          {errors.length > 0 && errors[0].msg != null && (
             <p className="error">Invalid email.</p>
           )}
         </div>
@@ -83,7 +82,7 @@ const Login = () => {
           {!passwordIsValid && passwordIsTouched && (
             <p className="error">Invalid password.</p>
           )}
-          {errors != null && errors.length > 0 && errors[1].msg != null && (
+          {errors.length > 0 && errors[1].msg != null && (
             <p className="error">Invalid password.</p>
           )}
         </div>

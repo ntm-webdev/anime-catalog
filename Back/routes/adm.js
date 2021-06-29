@@ -1,6 +1,7 @@
 const express = require("express");
 const { body } = require("express-validator");
 
+const { multer, storage, fileFilter, limits } = require("../middlewares/fileUpload");
 const admController = require("../controllers/admController");
 const authMiddleware = require("../middlewares/auth");
 
@@ -10,6 +11,7 @@ router.get("/my-area", authMiddleware, admController.myArea);
 router.post("/add-watchlist", authMiddleware, admController.addWatchlist);
 router.post(
   "/add-anime",
+  multer({ storage, fileFilter, limits }).single("image"),
   [
     body("title").isLength({ min: 3 }).withMessage("Invalid title."),
     body("genre").not().isEmpty().withMessage("Invalid genre."),

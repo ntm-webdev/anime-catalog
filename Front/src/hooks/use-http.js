@@ -3,54 +3,46 @@ import { useState, useCallback } from "react";
 import { axiosInstance } from "../lib/axios";
 
 const useHttp = () => {
-  const [error, setError] = useState("");
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState([]);
   const [spinner, setSpinner] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState({ msg: '', success: true });
 
-  const sendRequest = useCallback(
-    async (url, method, data = null) => {
-      let response;
-      setSpinner(true);
+  const sendRequest = useCallback(async (url, method, data = null) => {
+    setErrors([]);
+    setMessage({ msg: '', success: true });
+    setSpinner(true);
 
-      try {
-        if (method === "get") {
-          const res = await axiosInstance.get(url, data);
+    let response;
+    let res;
+    try {
+      switch (method) {
+        case "get":
+          res = await axiosInstance.get(url, data);
           response = res.data.fetchedData;
-        } else if (method === "delete") {
-          const res = await axiosInstance.delete(url, data);
+          break;
+        case "delete":
+          res = await axiosInstance.delete(url, data);
           response = res.data;
-        } else {
-          const res = await axiosInstance.post(url, data);
+          break;
+        default:
+          res = await axiosInstance.post(url, data);
           response = res.data;
-          setMessage(response.msg);
-          window.setTimeout(() => {
-            setMessage("");
-          }, 1500);
-        }
-        setError("");
-        setSpinner(false);
-        return response;
-      } catch (err) {
-        setSpinner(false);
-        setMessage("");
-        if (err.response.status === 422) {
-          if (err.response.data.errors.length > 0) {
-            setErrors(err.response.data.errors);
-          } else {
-            setError(err.response.data.msg);
-          }
-        } else if (err.response.status === 500 || err.response.status === 401) {
-          setError(err.response.data.msg);
-        } else {
-          setError(err.response.data.msg);
-        }
+          setMessage({ msg: response.msg, success: true });
+          setTimeout(() => setMessage(""), 1500);
       }
-    },
-    []
-  );
+      setSpinner(false);
+      return response;
+    } catch (err) {
+      setSpinner(false);
+      if (err.response.status === 422) {
+        setErrors(err.response.data.errors);
+      } else {
+        setMessage({msg: err.response.data.msg, success: false});
+      }
+    }
+  }, []);
 
-  return { sendRequest, spinner, message, error, errors };
+  return { sendRequest, spinner, message, errors };
 };
 
 export default useHttp;

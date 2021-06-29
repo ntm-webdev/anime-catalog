@@ -8,7 +8,7 @@ import Spinner from "../UI/Spinner/Spinner";
 
 const Feedback = ({ animeId, fetchData, animeRating, animeComment, feedbackId, editMode }) => {
   const authCtx = useContext(AuthContext);
-  const { sendRequest, spinner, message, error, errors } = useHttp();
+  const { sendRequest, spinner, message, errors } = useHttp();
 
   const {
     onChangeHandler: onRatingChangeHandler,
@@ -63,16 +63,7 @@ const Feedback = ({ animeId, fetchData, animeRating, animeComment, feedbackId, e
     <div className={`${styles.feedback}`}>
       <h2>Leave your feedback</h2>
       <form noValidate onSubmit={onSubmitHandler}>
-        {message !== "" && (
-          <div className="alert alert-success" role="alert">
-            {message}
-          </div>
-        )}
-        {error !== "" && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
+        {message.msg && <div className={`alert ${message.success ? 'alert-success' : 'alert-danger'}`} role="alert">{message.msg}</div>}
         <div className="form-group">
           <label htmlFor="rating">Rating</label>
           <input

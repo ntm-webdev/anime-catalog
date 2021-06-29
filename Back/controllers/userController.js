@@ -1,10 +1,9 @@
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const Anime = require("../models/anime");
 const User = require("../models/user");
-
-const bcrypt = require("bcrypt");
 
 module.exports.getAnimes = async (req, res) => {
   try {
@@ -54,26 +53,16 @@ module.exports.getAnime = async (req, res) => {
 
 module.exports.signUp = async (req, res) => {
   const errors = validationResult(req);
+  let errorsArray = [{}, {}, {}, {}, {}];
 
   if (!errors.isEmpty()) {
-    const errorsArray = [{}, {}, {}, {}];
     const response_errors = errors.array();
+    errorsArray = response_errors.map((err) => ({ msg: err.msg }));
+    return res.status(422).json({ errors: errorsArray });
+  }
 
-    for (let i = 0; i < response_errors.length; i++) {
-      if (response_errors[i].param === "name") {
-        errorsArray[0].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "email") {
-        errorsArray[1].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "password") {
-        errorsArray[2].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "confPassword") {
-        errorsArray[2].msg = response_errors[i].msg;
-      }
-    }
-
+  if (!req.file || req.fileValidationError) {
+    errorsArray[4] = { msg: "Invalid image." };
     return res.status(422).json({ errors: errorsArray });
   }
 
@@ -88,10 +77,9 @@ module.exports.signUp = async (req, res) => {
 
   if (existingUser) {
     return res
-      .status(422)
+      .status(500)
       .json({
         msg: "This email is already in use, please use a different one.",
-        errors: [],
       });
   }
 
@@ -122,7 +110,7 @@ module.exports.signUp = async (req, res) => {
 
   let token;
   try {
-    token = jwt.sign({ userId: newUser._id }, "the_very_secret");
+    token = jwt.sign({ userId: newUser._id }, process.env.JWT_KEY);
   } catch (err) {
     return res
       .status(500)
@@ -143,18 +131,9 @@ module.exports.login = async (req, res) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    const errorsArray = [{}, {}];
     const response_errors = errors.array();
-
-    for (let i = 0; i < response_errors.length; i++) {
-      if (response_errors[i].param === "email") {
-        errorsArray[0].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "password") {
-        errorsArray[1].msg = response_errors[i].msg;
-      }
-    }
-
+    const errorsArray = response_errors.map(err => ({ msg: err.msg }));
+    
     return res.status(422).json({ errors: errorsArray });
   }
 
@@ -188,7 +167,7 @@ module.exports.login = async (req, res) => {
 
   let token;
   try {
-    token = jwt.sign({ userId: existingUser._id }, "the_very_secret");
+    token = jwt.sign({ userId: existingUser._id }, process.env.JWT_KEY);
   } catch (err) {
     return res
       .status(500)

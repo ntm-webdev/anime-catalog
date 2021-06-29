@@ -11,7 +11,7 @@ const MyArea = () => {
   const authCtx = useContext(AuthContext);
   const history = useHistory();
   const [user, setUser] = useState();
-  const { sendRequest, spinner, error } = useHttp();
+  const { sendRequest, spinner, message } = useHttp();
 
   useEffect(() => {
     if (!authCtx.isLoggedIn) {
@@ -81,7 +81,7 @@ const MyArea = () => {
     );
   }
 
-  return error ? <p>{error}</p> : content;
+  return message.msg ? <p>{message.msg}</p> : content;
 };
 
 export default MyArea;

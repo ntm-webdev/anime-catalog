@@ -1,8 +1,8 @@
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const multer = require("multer");
 const path = require("path");
 
 const userRoute = require("./routes/user");
@@ -10,25 +10,15 @@ const admRoute = require("./routes/adm");
 
 const app = express();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(multer({ storage }).single("image"));
-app.use("/images", express.static(path.join(__dirname, "/images")));
-app.use(userRoute);
-app.use("/admin", admRoute);
+app.use("/app/images", express.static(path.join(__dirname, "/images")));
+app.use("/app", userRoute);
+app.use("/app/admin", admRoute);
 
 mongoose
-  .connect("mongodb://localhost:27017/animeflix", {
+  .connect(process.env.DB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

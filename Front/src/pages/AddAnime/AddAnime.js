@@ -15,7 +15,7 @@ const AddAnime = () => {
   }
 
   const imageField = useRef();
-  const { sendRequest, spinner, message, error, errors } = useHttp();
+  const { sendRequest, spinner, message, errors } = useHttp();
 
   const {
     onChangeHandler: onTitleChangeHandler,
@@ -118,16 +118,7 @@ const AddAnime = () => {
   return (
     <div className="formContainer">
       <form noValidate onSubmit={onSubmitHandler}>
-        {message !== "" && (
-          <div className="alert alert-success" role="alert">
-            {message}
-          </div>
-        )}
-        {error !== "" && (
-          <div className="alert alert-danger" role="alert">
-            {error}
-          </div>
-        )}
+        {message.msg && <div className={`alert ${message.success ? 'alert-success' : 'alert-danger'}`} role="alert">{message.msg}</div>}
         <div className="form-group">
           <label htmlFor="title">Title</label>
           <input
@@ -186,26 +177,6 @@ const AddAnime = () => {
           )}
         </div>
         <div className="form-group">
-          <label htmlFor="file">Image</label>
-          <input
-            type="file"
-            className="form-control-file"
-            id="image"
-            ref={imageField}
-            name="image"
-            rows="3"
-            defaultValue={image}
-            onBlur={onImageChangeHandler}
-            onChange={onImageChangeHandler}
-          />
-          {!imageIsValid && imageIsTouched && (
-            <p className="error">Invalid image.</p>
-          )}
-          {errors.length > 0 && errors[3].msg != null && (
-            <p className="error">Invalid image.</p>
-          )}
-        </div>
-        <div className="form-group">
           <label htmlFor="release-date">Release date</label>
           <input
             type="date"
@@ -218,7 +189,7 @@ const AddAnime = () => {
           {!releaseDateIsValid && releaseDateIsTouched && (
             <p className="error">Invalid release date.</p>
           )}
-          {errors.length > 0 && errors[4].msg != null && (
+          {errors.length > 0 && errors[3].msg != null && (
             <p className="error">Invalid release date.</p>
           )}
         </div>
@@ -236,7 +207,7 @@ const AddAnime = () => {
           {!episodesIsValid && episodesIsTouched && (
             <p className="error">Invalid episode.</p>
           )}
-          {errors.length > 0 && errors[5].msg != null && (
+          {errors.length > 0 && errors[4].msg != null && (
             <p className="error">Invalid episode.</p>
           )}
         </div>
@@ -253,8 +224,28 @@ const AddAnime = () => {
           {!trailerIsValid && trailerIsTouched && (
             <p className="error">Invalid trailer.</p>
           )}
-          {errors.length > 0 && errors[6].msg != null && (
+          {errors.length > 0 && errors[5].msg != null && (
             <p className="error">Invalid trailer.</p>
+          )}
+        </div>
+        <div className="form-group">
+          <label htmlFor="file">Image</label>
+          <input
+            type="file"
+            className="form-control-file"
+            id="image"
+            ref={imageField}
+            name="image"
+            rows="3"
+            defaultValue={image}
+            onBlur={onImageChangeHandler}
+            onChange={onImageChangeHandler}
+          />
+          {!imageIsValid && imageIsTouched && (
+            <p className="error">Invalid image.</p>
+          )}
+          {errors.length > 0 && errors[6].msg != null && (
+            <p className="error">Invalid image.</p>
           )}
         </div>
         {!spinner && (

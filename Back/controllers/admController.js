@@ -2,35 +2,20 @@ const { validationResult } = require("express-validator");
 
 const Anime = require("../models/anime");
 const User = require("../models/user");
+const { calculateFeedback } = require("../lib/helpers");
 
 module.exports.addAnime = async (req, res) => {
   const errors = validationResult(req);
-
+  let errorsArray = [{}, {}, {}, {}, {}, {}, {}];
+  
   if (!errors.isEmpty()) {
-    const errorsArray = [{}, {}, {}, {}, {}, {}];
     const response_errors = errors.array();
+    errorsArray = response_errors.map((err) => ({ msg: err.msg }));
+    return res.status(422).json({ errors: errorsArray });
+  }
 
-    for (let i = 0; i < response_errors.length; i++) {
-      if (response_errors[i].param === "title") {
-        errorsArray[0].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "genre") {
-        errorsArray[1].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "description") {
-        errorsArray[2].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "releaseDate") {
-        errorsArray[3].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "episodes") {
-        errorsArray[4].msg = response_errors[i].msg;
-      }
-      if (response_errors[i].param === "episodes") {
-        errorsArray[5].msg = response_errors[5].msg;
-      }
-    }
-
+  if (!req.file || req.fileValidationError) {
+    errorsArray[6] = { msg: "Invalid image." };
     return res.status(422).json({ errors: errorsArray });
   }
 
@@ -147,11 +132,8 @@ module.exports.addFeedback = async (req, res) => {
       });
     }
 
-    const numberOfFeedbacks = existingAnime.feedback.length;
-    const arrRatings = existingAnime.feedback.map((el) => el.rating);
-    const sumOfRatings = arrRatings.reduce((a, b) => a + b, 0);
-
-    existingAnime.rating = sumOfRatings / numberOfFeedbacks;
+    const rating = calculateFeedback(existingAnime);
+    existingAnime.rating = rating;
     await existingAnime.save();
 
     existingUser.feedback.push(existingAnime._id);
@@ -191,16 +173,8 @@ module.exports.removeFeedback = async (req, res) => {
     await existingUser.save();
 
     existingAnime.feedback.pull(req.body.feedbackId);
-    const numberOfFeedbacks = existingAnime.feedback.length;
-
-    if (numberOfFeedbacks > 0) {
-      const arrRatings = existingAnime.feedback.map((el) => el.rating);
-      const sumOfRatings = arrRatings.reduce((a, b) => a + b, 0);
-
-      existingAnime.rating = sumOfRatings / numberOfFeedbacks;
-    } else {
-      existingAnime.rating = -1;
-    }
+    const rating = calculateFeedback(existingAnime);
+    existingAnime.rating = rating;
 
     await existingAnime.save();
   } catch (error) {
