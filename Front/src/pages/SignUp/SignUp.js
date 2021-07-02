@@ -73,11 +73,9 @@ const SignIn = () => {
     fd.append("image", image);
 
     try {
-      const userData = await sendRequest(`${process.env.REACT_APP_BASE_URL}/signup`, "post", fd);
-      authCtx.login(userData.token, userData.userId, userData.name);
-      setTimeout(() => {
-        history.replace("/");
-      }, 1500);
+      const userData = await sendRequest("/signup", "post", fd);
+      await authCtx.login(userData.token, userData.name);
+      history.replace("/");
     } catch (err) {
       return;
     }

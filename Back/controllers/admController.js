@@ -1,8 +1,39 @@
 const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 
 const Anime = require("../models/anime");
 const User = require("../models/user");
 const { calculateFeedback } = require("../lib/helpers");
+
+module.exports.getJWT = async (req, res, next) => {
+  if (!req.decodedToken) next();
+
+  try {
+    existingUser = await User.findById(req.decodedToken);
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ msg: "Something went wrong, please try again" });
+  }
+
+  let token;
+  try {
+    token = jwt.sign({ userId: req.decodedToken }, process.env.JWT_KEY);
+    res.cookie("token", token, {
+      //expires: new Date(Date.getTime() + 1 * 3600 * 1000),
+      httpOnly: true,
+      secure: true,
+    });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ msg: "Something went wrong, please try again later." });
+  }
+
+  return res
+    .status(200)
+    .json({ token, decodedToken: req.decodedToken, userName: existingUser.name })
+};
 
 module.exports.addAnime = async (req, res) => {
   const errors = validationResult(req);
@@ -46,11 +77,11 @@ module.exports.addAnime = async (req, res) => {
 module.exports.addWatchlist = async (req, res) => {
   let existingUser;
   try {
-    existingUser = await User.findById(req.body.userId);
+    existingUser = await User.findById(req.decodedToken);
   } catch (err) {
     return res
       .status(500)
-      .json({ msg: "Something went wrong, please try again.1" });
+      .json({ msg: "Something went wrong, please try again." });
   }
 
   let existingAnime;
@@ -59,23 +90,23 @@ module.exports.addWatchlist = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json({ msg: "Something went wrong, please try again.2" });
+      .json({ msg: "Something went wrong, please try again." });
   }
 
   try {
     if (req.body.isAdding) {
       existingUser.watchList.push(req.body.animeId);
-      existingAnime.usersWannaWatch.push(req.body.userId);
+      existingAnime.usersWannaWatch.push(req.decodedToken);
     } else {
       existingUser.watchList.pull(req.body.animeId);
-      existingAnime.usersWannaWatch.pull(req.body.userId);
+      existingAnime.usersWannaWatch.pull(req.decodedToken);
     }
     await existingUser.save();
     await existingAnime.save();
   } catch (err) {
     return res
       .status(500)
-      .json({ msg: "Something went wrong, please try again.3" });
+      .json({ msg: "Something went wrong, please try again." });
   }
 
   return res
@@ -86,9 +117,9 @@ module.exports.addWatchlist = async (req, res) => {
 module.exports.myArea = async (req, res) => {
   let existingUser;
   try {
-    existingUser = await User.findById(req.query.userId)
-      .populate("watchList")
-      .populate("feedback");
+    existingUser = await User.findById(req.decodedToken)
+      .select('-password -feedback')
+      .populate("watchList");
   } catch (err) {
     return res
       .status(500)
@@ -101,7 +132,7 @@ module.exports.myArea = async (req, res) => {
 module.exports.addFeedback = async (req, res) => {
   let existingUser;
   try {
-    existingUser = await User.findById(req.body.userId);
+    existingUser = await User.findById(req.decodedToken);
   } catch (err) {
     return res
       .status(500)
@@ -119,9 +150,7 @@ module.exports.addFeedback = async (req, res) => {
 
   try {
     if (req.body.feedbackId) {
-      const selectedFeedback = existingAnime.feedback.find(
-        (el) => el._id == req.body.feedbackId
-      );
+      const selectedFeedback = existingAnime.feedback.find((el) => el._id == req.body.feedbackId);
       selectedFeedback.comment = req.body.comment;
       selectedFeedback.rating = req.body.rating;
     } else {
@@ -152,7 +181,7 @@ module.exports.addFeedback = async (req, res) => {
 module.exports.removeFeedback = async (req, res) => {
   let existingUser;
   try {
-    existingUser = await User.findById(req.body.userId);
+    existingUser = await User.findById(req.decodedToken);
   } catch (err) {
     return res
       .status(500)
@@ -177,7 +206,7 @@ module.exports.removeFeedback = async (req, res) => {
     existingAnime.rating = rating;
 
     await existingAnime.save();
-  } catch (error) {
+  } catch (err) {
     return res
       .status(500)
       .json({ msg: "Something went wrong, please try again." });

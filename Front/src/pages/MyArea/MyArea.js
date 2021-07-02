@@ -22,9 +22,9 @@ const MyArea = () => {
   }, []);
 
   const fetchData = async () => {
-    const data = { params: { userId: authCtx.userId } };
+    const data = { params: { userId: authCtx.token } };
     try {
-      const res = await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/my-area`, "get", data);
+      const res = await sendRequest("/admin/my-area", "get", data);
       setUser(res);
     } catch (err) {
       return;
@@ -32,9 +32,9 @@ const MyArea = () => {
   };
 
   const removeFromMyWatchListHandler = async (animeId, isAdding) => {
-    const data = { userId: authCtx.userId, animeId, isAdding };
+    const data = { animeId, isAdding };
     try {
-      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-watchlist`, "post", data);
+      await sendRequest("/admin/add-watchlist", "post", data);
       await fetchData();
     } catch (error) {
       return;

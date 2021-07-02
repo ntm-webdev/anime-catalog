@@ -7,6 +7,7 @@ const authMiddleware = require("../middlewares/auth");
 
 const router = express.Router();
 
+router.get("/jwt", authMiddleware, admController.getJWT);
 router.get("/my-area", authMiddleware, admController.myArea);
 router.post("/add-watchlist", authMiddleware, admController.addWatchlist);
 router.post(

@@ -24,7 +24,7 @@ const Home = () => {
   } else if (animes.length <= 0) {
     content = (
       <div className="row breath">
-        {authCtx.userName !== null && (
+        {authCtx.userName && (
           <h2 className="yellow-message">
             {`Hello, ${authCtx.userName}`}
           </h2>
@@ -37,7 +37,7 @@ const Home = () => {
   } else {
     content = (
       <>
-        {authCtx.userName !== null && (
+        {authCtx.userName && (
           <h2 className="yellow-message">
             {`Hello, ${authCtx.userName}`}
           </h2>

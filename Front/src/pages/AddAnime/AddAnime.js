@@ -107,12 +107,8 @@ const AddAnime = () => {
     fd.append("episodes", episodes);
     fd.append("trailer", trailer);
 
-    try {
-      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-anime`, "post", fd);
-      cleanFields();
-    } catch (error) {
-      return;
-    }
+    const res = await sendRequest("/admin/add-anime", "post", fd);
+    res && cleanFields();
   };
 
   return (

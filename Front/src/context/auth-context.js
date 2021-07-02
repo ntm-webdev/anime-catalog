@@ -1,49 +1,44 @@
 import React, { useState, useEffect } from "react";
+import { axiosInstance } from "../lib/axios";
 
 export const AuthContext = React.createContext({
   isLoggedIn: false,
   token: "",
-  userId: "",
   userName: "",
-  login: (token, userId, userName) => {},
+  login: (token, username) => {},
   logout: () => {},
 });
 
 const AuthProvider = ({ children }) => {
-  const [authenticatedData, setAuthenticatedData] = useState({
-    token: null,
-    userId: null,
-    userName: null,
-  });
+  const [token, setToken] = useState(null);
+  const [userName, setUsername] = useState(null);
 
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("userData"));
-    if (storedData && storedData.token) {
-      loginHandler(storedData.token, storedData.userId, storedData.userName);
-    }
+    getJWT();
   }, []);
 
-  const loginHandler = (token, userId, userName) => {
-    setAuthenticatedData({ token, userId, userName });
-    localStorage.setItem("userData", JSON.stringify({ token, userId, userName }));
+  const getJWT = async () => {
+    const res = await axiosInstance.get('/admin/jwt');
+    loginHandler(res.data.token, res.data.userName);
   };
 
-  const logoutHandler = () => {
-    setAuthenticatedData({
-      token: null,
-      userId: null,
-      userName: null,
-    });
-    localStorage.removeItem("userData");
+  const loginHandler = async (token, username) => {
+    setToken(token);
+    setUsername(username);
+  };
+
+  const logoutHandler = async () => {
+    setToken(null);
+    setUsername(null);
+    await axiosInstance.get('/logout');
   };
 
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: !!authenticatedData.token,
-        token: authenticatedData.token,
-        userId: authenticatedData.userId,
-        userName: authenticatedData.userName,
+        isLoggedIn: !!token,
+        token: token,
+        userName: userName,
         login: loginHandler,
         logout: logoutHandler,
       }}

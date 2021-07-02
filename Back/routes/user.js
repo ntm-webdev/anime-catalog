@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get("/animes", userController.getAnimes);
 router.get("/anime/:id", userController.getAnime);
+router.get("/logout", userController.logout);
 router.post(
   "/login",
   [

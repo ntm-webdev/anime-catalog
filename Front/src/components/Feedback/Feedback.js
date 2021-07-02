@@ -1,13 +1,9 @@
-import { useContext } from "react";
-
 import styles from "./Feedback.module.css";
 import useInput from "../../hooks/use-input";
 import useHttp from "../../hooks/use-http";
-import { AuthContext } from "../../context/auth-context";
 import Spinner from "../UI/Spinner/Spinner";
 
 const Feedback = ({ animeId, fetchData, animeRating, animeComment, feedbackId, editMode }) => {
-  const authCtx = useContext(AuthContext);
   const { sendRequest, spinner, message, errors } = useHttp();
 
   const {
@@ -38,7 +34,6 @@ const Feedback = ({ animeId, fetchData, animeRating, animeComment, feedbackId, e
       data = {
         rating,
         comment,
-        userId: authCtx.userId,
         animeId: animeId,
         feedbackId: feedbackId,
       };
@@ -46,13 +41,12 @@ const Feedback = ({ animeId, fetchData, animeRating, animeComment, feedbackId, e
       data = {
         rating,
         comment,
-        userId: authCtx.userId,
         animeId: animeId,
       };
     }
 
     try {
-      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-feedback`, "post", data);
+      await sendRequest("admin/add-feedback", "post", data);
       fetchData();
     } catch (error) {
       return;

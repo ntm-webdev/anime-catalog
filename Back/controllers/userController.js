@@ -26,7 +26,7 @@ module.exports.getAnime = async (req, res) => {
   let data;
   try {
     data = await Anime.findById(req.params.id)
-      .populate("usersWannaWatch")
+      .populate("usersWannaWatch", "-password")
       .populate({
         path: "feedback",
         populate: {
@@ -76,11 +76,9 @@ module.exports.signUp = async (req, res) => {
   }
 
   if (existingUser) {
-    return res
-      .status(500)
-      .json({
-        msg: "This email is already in use, please use a different one.",
-      });
+    return res.status(500).json({
+      msg: "This email is already in use, please use a different one.",
+    });
   }
 
   let hashedPassword;
@@ -111,20 +109,22 @@ module.exports.signUp = async (req, res) => {
   let token;
   try {
     token = jwt.sign({ userId: newUser._id }, process.env.JWT_KEY);
+    res.cookie("token", token, {
+      //expires: new Date(Date.getTime() + 1 * 3600 * 1000),
+      httpOnly: true,
+      secure: true,
+    });
   } catch (err) {
     return res
       .status(500)
       .json({ msg: "Something went wrong, please try again later." });
   }
 
-  return res
-    .status(201)
-    .json({
-      msg: "The user was added successfully.",
-      token: token,
-      userId: newUser._id,
-      name: newUser.name,
-    });
+  return res.status(201).json({
+    msg: "The user was added successfully.",
+    token: token,
+    name: newUser.name,
+  });
 };
 
 module.exports.login = async (req, res) => {
@@ -132,8 +132,8 @@ module.exports.login = async (req, res) => {
 
   if (!errors.isEmpty()) {
     const response_errors = errors.array();
-    const errorsArray = response_errors.map(err => ({ msg: err.msg }));
-    
+    const errorsArray = response_errors.map((err) => ({ msg: err.msg }));
+
     return res.status(422).json({ errors: errorsArray });
   }
 
@@ -168,13 +168,25 @@ module.exports.login = async (req, res) => {
   let token;
   try {
     token = jwt.sign({ userId: existingUser._id }, process.env.JWT_KEY);
+    res.cookie("token", token, {
+      //expires: new Date(Date.getTime() + 1 * 3600 * 1000),
+      httpOnly: true,
+      secure: true,
+    });
   } catch (err) {
     return res
       .status(500)
       .json({ msg: "Something went wrong, please try again later." });
   }
 
-  return res
-    .status(200)
-    .json({ token: token, userId: existingUser._id, name: existingUser.name });
+  return (
+    res
+      .status(200)
+      .json({ token: token, name: existingUser.name })
+  );
+};
+
+module.exports.logout = async (req, res) => {
+  res.clearCookie("token");
+  return res.end();
 };

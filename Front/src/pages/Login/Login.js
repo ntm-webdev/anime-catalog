@@ -40,8 +40,8 @@ const Login = () => {
 
     let userData;
     try {
-      userData = await sendRequest(`${process.env.REACT_APP_BASE_URL}/login`, 'post', data);
-      authCtx.login(userData.token, userData.userId, userData.name);
+      userData = await sendRequest("/login", "post", data);
+      authCtx.login(userData.token, userData.name);
       history.replace('/');
     } catch (err) {
       return;

@@ -6,8 +6,9 @@ import styles from "./AnimeView.module.css";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import Modal from "../../components/UI/Modal/Modal";
 import Feedback from "../../components/Feedback/Feedback";
-import useHttp from "../../hooks/use-http";
 import Trailer from "../../components/Trailer/Trailer";
+import useHttp from "../../hooks/use-http";
+import { axiosInstance } from "../../lib/axios";
 
 const getFormatedDate = (date) => {
   return (
@@ -37,6 +38,7 @@ const AnimeView = () => {
   const [comment, setComment] = useState();
   const [feedbackId, setFeedbackId] = useState();
   const [editMode, setEditMode] = useState(false);
+  const [userId, setUserId] = useState();
 
   let formatedDate;
   let userDidWatch;
@@ -50,11 +52,20 @@ const AnimeView = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    getJWT();
+  }, [authCtx.isLoggedIn]);
+
+  const getJWT = async () => {
+    const res = await axiosInstance.get('/admin/jwt');
+    setUserId(res.data.decodedToken);
+  };
+
   const fetchData = async () => {
     setShowModal(false);
     setEditMode(false);
     try {
-      const res = await sendRequest(`${process.env.REACT_APP_BASE_URL}/anime/${params.id}`, "get");
+      const res = await sendRequest(`/anime/${params.id}`, "get", { params: { token: authCtx.token } });
       setAnime(res);
       setRating(null);
       setComment(null);
@@ -74,12 +85,12 @@ const AnimeView = () => {
     }
   };
 
-  const removeFeedBackHandler = async (u_id, a_id, f_id) => {
+  const removeFeedBackHandler = async (a_id, f_id) => {
     const res = window.confirm(`Are you sure you want to remove your feedback from the following anime: ${anime.title}?`);
     if (res) {
       try {
-        const data = { data: { userId: u_id, animeId: a_id, feedbackId: f_id } };
-        await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/remove-feedback`, "delete", data);
+        const data = { data: { animeId: a_id, feedbackId: f_id } };
+        await sendRequest("/admin/remove-feedback", "delete", data);
         fetchData();
       } catch (error) {
         return;
@@ -90,9 +101,9 @@ const AnimeView = () => {
   };
 
   const addToMyWatchListHandler = async (isAdding) => {
-    const data = { userId: authCtx.userId, animeId: params.id, isAdding };
+    const data = { animeId: params.id, isAdding };
     try {
-      await sendRequest(`${process.env.REACT_APP_BASE_URL_ADM}/add-watchlist`, "post", data);
+      await sendRequest("/admin/add-watchlist", "post", data);
       await fetchData();
     } catch (error) {
       return;
@@ -102,15 +113,15 @@ const AnimeView = () => {
   if (spinner || !anime) {
     content = <Spinner />;
   } else {
-    userDidWatch = anime.usersWannaWatch.find(el => el._id === authCtx.userId);
-    isAuthor = anime.feedback.find(el => el.userid._id === authCtx.userId);
+    userDidWatch = anime.usersWannaWatch.find(el => el._id === userId);
+    isAuthor = anime.feedback.find(el => el.userid._id === userId);
     formatedDate = getFormatedDate(new Date(anime.release_date));
     trailer = getFormatedTrailer(anime.trailer);
     animeRating = getAnimeRating(anime.rating);
 
     if (authCtx.isLoggedIn) {
       watchListButton =
-        userDidWatch && userDidWatch._id === authCtx.userId ? (
+        userDidWatch && userDidWatch._id === userId ? (
           <button
             className="btn btn-danger"
             onClick={() => addToMyWatchListHandler(false)}
@@ -186,7 +197,7 @@ const AnimeView = () => {
                     <div key={feedback._id} className={styles.feedback}>
                       <div className={styles.feedbackTitleNoPadding}>
                         <h5>{feedback.userid.name} says:</h5>
-                        {authCtx.userId === feedback.userid._id && (
+                        {userId === feedback.userid._id && (
                           <div className="btn-group">
                             <button
                               className="btn btn-success"
@@ -207,7 +218,6 @@ const AnimeView = () => {
                               className="btn btn-danger"
                               onClick={() =>
                                 removeFeedBackHandler(
-                                  authCtx.userId,
                                   params.id,
                                   feedback._id
                                 )
